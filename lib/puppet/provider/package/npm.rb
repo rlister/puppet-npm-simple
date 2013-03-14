@@ -43,7 +43,7 @@ Puppet::Type.type(:package).provide :npm, :parent => Puppet::Provider::Package d
   ## return single hash (or nil) for matching pkg if name given as arg
   def npm_list(pkgname = nil)
     output = npm_exec "list --long --parseable"
-    packages = output.split("\n").grep(/(\w+)@([\d\.]+)/) { {:name => $1, :version => $2} }
+    packages = output.split("\n").grep(/([\w-]+)@([\d\.]+)/) { {:name => $1, :version => $2} }
 
     if pkgname
       packages.select {|p| p[:name] == pkgname}.first
