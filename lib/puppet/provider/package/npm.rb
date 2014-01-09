@@ -16,12 +16,34 @@ Puppet::Type.type(:package).provide :npm, :parent => Puppet::Provider::Package d
   ## get dir where node executable is installed, from nodepath property, or PATH,
   ## then return robust way to run npm
   def build_npm_cmd
-    options = symbolizehash(@resource[:install_options] || {})
+    options = install_options
     nodepath = options[:nodepath] || ((node = which 'node') && File.dirname(node))
     raise Puppet::Error, "failed to find node.js, set 'nodepath' property or PATH" unless nodepath
-    "#{nodepath}/node #{nodepath}/npm"
+    "#{nodepath}/npm"
   end
 
+  #stuff added to try and make install options work with puppet 3
+  def install_options
+    collect_options(resource[:install_options])
+  end
+
+  def collect_options(options)
+    return unless options
+    newOpts = Hash.new
+    options.each do |val|
+      case val
+      when Hash
+        val.keys.each do |key|
+          newOpts[key] = val[key]
+        end
+      else
+        newOpts[val] = val
+      end
+    end
+
+    symbolizehash(newOpts)
+  end
+  
   ## can exec for global, or cd to a dir and run local installation
   def npm_exec(args)
     options = symbolizehash(@resource[:install_options] || {})
