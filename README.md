@@ -24,7 +24,7 @@ Just drop this package in your Puppet modulepath, e.g.:
 Usage
 -----
 
-By dedault, npm-simple will use node from your path and do a global
+By default, npm-simple will use node from your path and do a global
 npm installation:
 
     package { "underscore":
